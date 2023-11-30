@@ -1,0 +1,10 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "paths": {
+      "geonav-scale-expo": ["../src/index"],
+      "geonav-scale-expo/*": ["../src/*"]
+    }
+  }
+}
