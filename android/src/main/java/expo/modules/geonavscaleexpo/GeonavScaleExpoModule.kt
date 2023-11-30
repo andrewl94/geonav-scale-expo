@@ -2,6 +2,9 @@ package expo.modules.geonavscaleexpo
 
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
+
+var geonavScanner = GeonavSDK()
+
 class GeonavScaleExpoModule : Module() {
   override fun definition() = ModuleDefinition {
     Name("GeonavScaleExpo")
@@ -11,6 +14,7 @@ class GeonavScaleExpoModule : Module() {
     Events("foundDevices")
 
     Function("hello") {
+      geonavScanner.startScan()
       "Hello world! 👋"
     }
 
