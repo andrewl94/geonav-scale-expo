@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "geonav-scale-expo",
+    "slug": "geonav-scale-expo",
+    "version": "0.1.0",
+    "description": "Geonav Scale SDK for Expo",
+    "sdkVersion": "49.0.0",
+    "platforms": [
+      "ios",
+      "android"
+    ]
+  }
+}

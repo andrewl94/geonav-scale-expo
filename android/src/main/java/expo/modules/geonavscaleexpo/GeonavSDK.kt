@@ -1,15 +1,7 @@
 package expo.modules.geonavscaleexpo
 
 
-import android.Manifest
-import android.app.Activity
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import cn.icomon.icdevicemanager.ICDeviceManager
-import cn.icomon.icdevicemanager.ICDeviceManager.REQUEST_ACCESS_COARSE_LOCATION
 import cn.icomon.icdevicemanager.ICDeviceManagerDelegate
 import cn.icomon.icdevicemanager.callback.ICScanDeviceDelegate
 import cn.icomon.icdevicemanager.model.data.ICCoordData
@@ -25,19 +17,19 @@ import cn.icomon.icdevicemanager.model.device.ICScanDeviceInfo
 import cn.icomon.icdevicemanager.model.device.ICUserInfo
 import cn.icomon.icdevicemanager.model.other.ICConstant
 import cn.icomon.icdevicemanager.model.other.ICDeviceManagerConfig
+import expo.modules.kotlin.AppContext
 
 
-class GeonavSDK: Activity(), ICScanDeviceDelegate, ICDeviceManagerDelegate, EventMsg.Event {
+class GeonavSDK():  ICDeviceManagerDelegate, EventMsg.Event {
 
     private lateinit var deviceInfo: ICScanDeviceInfo
     private var unitIndex: Int? = 1
     private lateinit var device: ICDevice
+
+    private var loaded = false
     init {
-        if (!checkBlePermission(this.baseContext)) {
-            requestBlePermission(this);
-        } else {
-            initSDK();
-        }
+        addLog("Init SDK")
+        initSDK();
     }
 
     private fun initSDK(){
@@ -57,35 +49,20 @@ class GeonavSDK: Activity(), ICScanDeviceDelegate, ICDeviceManagerDelegate, Even
 
         ICDeviceManager.shared().updateUserInfo(userInfo);
         ICDeviceManager.shared().initMgrWithConfig(config);
+
+        addLog("Init SDK Finalized")
+
     }
 
     fun startScan(){
-        ICDeviceManager.shared().scanDevice(this);
-    }
-
-    private fun requestBlePermission(activity: Activity) {
-        if (Build.VERSION.SDK_INT >= 23) {
-            val bPermission: Boolean = checkBlePermission(activity.applicationContext)
-            if (!bPermission) {
-                ActivityCompat.requestPermissions(activity, arrayOf<String>(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.WRITE_EXTERNAL_STORAGE),
-                        REQUEST_ACCESS_COARSE_LOCATION)
-            }
-        }
-    }
-
-    private fun checkBlePermission(context: Context?): Boolean {
-        if (Build.VERSION.SDK_INT >= 23) {
-            val bPermission = ContextCompat.checkSelfPermission(context!!, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-            if (bPermission) {
-                ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-            }
-            return bPermission
-        }
-        return true
+        addLog("start Scan")
+        if(loaded)
+            addLog("Loaded")
+//            ICDeviceManager.shared().scanDevice(this);
     }
 
     private fun addLog(data:Any?){
-        print("GeonavScaleExpo Log:")
+        print("GeonavScaleExpoEvent: ");
         println(data);
     }
     override fun onCallBack(obj: Any?) {
@@ -106,12 +83,13 @@ class GeonavSDK: Activity(), ICScanDeviceDelegate, ICDeviceManagerDelegate, Even
 
         ICDeviceManager.shared().addDevice(device) { device, _ -> addLog(device) }
     }
-    override fun onScanResult(deviceInfo: ICScanDeviceInfo?) {
+    fun onScanResult(deviceInfo: ICScanDeviceInfo?) {
         addLog(deviceInfo)
     }
 
     override fun onInitFinish(bSuccess: Boolean) {
         addLog("On Init Finish $bSuccess")
+        loaded = true
     }
 
     override fun onBleState(state: ICConstant.ICBleState) {

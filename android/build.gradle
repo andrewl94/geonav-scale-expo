@@ -86,5 +86,8 @@ repositories {
 dependencies {
   implementation project(':expo-modules-core')
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${getKotlinVersion()}"
-    implementation project(path: ':ICDeviceManager')
+  // implementation files('libs/ICDeviceManager.aar')
+  implementation files('libs/ICDeviceManager.aar')
+  // implementation "cn.icomon:icdevicemanager@aar"
+//    implementation project(path: ':ICDeviceManager')
 }
