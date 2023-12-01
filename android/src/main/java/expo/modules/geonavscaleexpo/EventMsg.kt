@@ -16,4 +16,9 @@ class EventMsg {
             events[name]!!.onCallBack(obj)
         }
     }
+
+    fun addLog(data:Any?){
+        print("GeonavScaleExpoEvent: ");
+        println(data);
+    }
 }

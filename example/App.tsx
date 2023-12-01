@@ -1,5 +1,10 @@
-import { initialize, requestPermissions } from "geonav-scale-expo";
-import { useState } from "react";
+import {
+  initialize,
+  requestPermissions,
+  startScan,
+  stopScan,
+} from "geonav-scale-expo";
+import { useEffect, useState } from "react";
 import {
   SafeAreaView,
   StyleSheet,
@@ -8,23 +13,28 @@ import {
   View,
 } from "react-native";
 
-// GeonavScaleExpo.initialize();
 export default function App() {
   const [isPermissionAllowed, setIsPermissionAllowed] = useState(false);
 
-  const requestPermissionsRN = () => {
-    requestPermissions();
-    setIsPermissionAllowed(true);
+  useEffect(() => {
+    console.log('init permissions')
+    checkPermissions();
+  }, []);
+
+  const checkPermissions = () => {
+    requestPermissions().then((response) => {
+      console.log(response);
+      setIsPermissionAllowed(true);
+      initialize();
+    });
   };
 
-  const scanDevices = () => {
-    //TODO: Scan Devices
-    initialize()
-    console.log("Scan Devices FE requestd");
+  const startScanDevices = () => {
+    startScan();
   };
 
-  const stopTracking = () => {
-    console.log("stopTracking FE requestd");
+  const stopScanDevices = () => {
+    stopScan();
   };
 
   return (
@@ -32,22 +42,24 @@ export default function App() {
       <View style={styles.mainContent}>
         {isPermissionAllowed ? (
           <>
-            <Text style={styles.stepsTitle}>Permissions loaded</Text>
+            <Text style={styles.stepsTitle}>
+              Clique para iniciar a sincronizacao
+            </Text>
           </>
         ) : (
-          <Text style={styles.requestFont}>Please Enable Permissions</Text>
+          <Text style={styles.requestFont}>Carregando permissoes</Text>
         )}
       </View>
       <TouchableOpacity
         style={styles.ctaButton}
-        onPress={isPermissionAllowed ? scanDevices : requestPermissionsRN}
+        onPress={isPermissionAllowed ? startScanDevices : checkPermissions}
       >
         <Text style={styles.ctaButtonText}>
-          {isPermissionAllowed ? "Start Tracking" : "Request Permissions"}
+          {isPermissionAllowed ? "Procurar balancas" : "Habilitar Permissoes"}
         </Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.ctaButton} onPress={stopTracking}>
-        <Text style={styles.ctaButtonText}>Stop Tracking</Text>
+      <TouchableOpacity style={styles.ctaButton} onPress={stopScanDevices}>
+        <Text style={styles.ctaButtonText}>Parar de procurar balancas</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -74,7 +86,7 @@ const styles = StyleSheet.create({
     fontWeight: "300",
   },
   stepsTitle: {
-    fontSize: 50,
+    fontSize: 24,
     fontWeight: "bold",
   },
   ctaButton: {

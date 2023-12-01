@@ -9,6 +9,14 @@ export function initialize() {
   GeonavScaleExpoModule.initialize();
 }
 
+export function startScan() {
+  GeonavScaleExpoModule.startScan();
+}
+
+export function stopScan() {
+  GeonavScaleExpoModule.stopScan();
+}
+
 export async function requestPermissions() {
   const result = await PermissionsAndroid.requestMultiple([
     PermissionsAndroid.PERMISSIONS.BLUETOOTH_SCAN,
@@ -18,7 +26,7 @@ export async function requestPermissions() {
     PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
   ]);
-  console.log(result)
+  return result;
   // return GeonavScaleExpoModule.requestPermissions();
 }
 
